@@ -307,8 +307,7 @@ extension VideoExporter {
         self.exportVideoToDiskFrom(avMutableComposition: mixComposition, avMutatableVideoComposition: avMutableVideoComposition, success: success, failure: failure)
     }
     
-    @discardableResult public static func createVideoExportOperationWithoutCrop(videoAsset: VideoAsset,
-                                                                                watermarkView: UIView? = nil) throws -> VideoExportOperation {
+    @discardableResult public static func createVideoExportOperationWithoutCrop(videoAsset: VideoAsset, watermarkView: UIView? = nil) throws -> VideoExportOperation {
         // 1 - Create AVMutableComposition object. This object will hold your AVMutableCompositionTrack instances.
         let mixComposition = AVMutableComposition()
         
@@ -322,18 +321,14 @@ extension VideoExporter {
         }
         
         // Attach timerange for first video track
-        try firstTrack.insertTimeRange(videoAsset.timeRange,
-                                       of: assetFirstVideoTrack,
-                                       at: CMTime.zero)
+        try firstTrack.insertTimeRange(videoAsset.timeRange, of: assetFirstVideoTrack, at: CMTime.zero)
         
         // 2.1
         let mainInstruction = AVMutableVideoCompositionInstruction()
-        mainInstruction.timeRange = CMTimeRange(start: CMTime.zero,
-                                                duration: videoAsset.durationInCMTime)
+        mainInstruction.timeRange = CMTimeRange(start: CMTime.zero, duration: videoAsset.durationInCMTime)
         
         // 2.2
-        let firstInstruction = self.createSimpleVideoCompositionInstruction(compositionTrack: firstTrack,
-                                                                            assetTrack: assetFirstVideoTrack)
+        let firstInstruction = self.createSimpleVideoCompositionInstruction(compositionTrack: firstTrack, assetTrack: assetFirstVideoTrack)
         
         // 2.3
         mainInstruction.layerInstructions = [firstInstruction]
@@ -347,6 +342,7 @@ extension VideoExporter {
         avMutableVideoComposition.renderSize = assetFirstVideoTrack.naturalSize
         
         var finalAVMutable = avMutableVideoComposition
+
         if let copyOfLayer = watermarkView?.layer.copyOfLayer {
             finalAVMutable = self.addLayer(copyOfLayer, to: avMutableVideoComposition)
         }
@@ -357,9 +353,7 @@ extension VideoExporter {
         }
         
         let audioTrack = mixComposition.addMutableTrack(withMediaType: .audio, preferredTrackID: 0)
-        try audioTrack?.insertTimeRange(videoAsset.timeRange,
-                                        of: audioAsset,
-                                        at: CMTime.zero)
+        try audioTrack?.insertTimeRange(videoAsset.timeRange, of: audioAsset, at: CMTime.zero)
         
         // 4 Export Video
         

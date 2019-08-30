@@ -138,7 +138,7 @@ extension VideoAsset {
         }
     }
 
-    private static func getTimeRanges(for duration: Int, clipLength: Int) -> [CMTimeRange] {
+    public static func getTimeRanges(for duration: Int, clipLength: Int) -> [CMTimeRange] {
         // @TODO: figure out how to use doubles?
         let numbers = Array(1...duration)
         let result = numbers.chunked(into: clipLength)
