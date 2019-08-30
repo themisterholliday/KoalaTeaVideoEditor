@@ -1,0 +1,6 @@
+framework module KoalaTeaAutoLayout {
+  umbrella header "KoalaTeaAutoLayout-umbrella.h"
+
+  export *
+  module * { export * }
+}

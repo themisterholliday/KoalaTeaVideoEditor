@@ -1,0 +1,6 @@
+framework module KoalaTeaAssetPlayer {
+  umbrella header "KoalaTeaAssetPlayer-umbrella.h"
+
+  export *
+  module * { export * }
+}

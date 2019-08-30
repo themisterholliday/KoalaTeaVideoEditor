@@ -1,0 +1,41 @@
+{
+  "name": "KoalaTeaVideoEditor",
+  "version": "0.1.0",
+  "summary": "A library to help with video editing",
+  "homepage": "https://github.com/themisterholliday/KoalaTeaVideoEditor",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "Craig Holliday": "hello@craigholliday.net"
+  },
+  "source": {
+    "git": "https://github.com/themisterholliday/KoalaTeaVideoEditor.git",
+    "tag": "0.1.0"
+  },
+  "social_media_url": "https://twitter.com/TheMrHolliday",
+  "platforms": {
+    "ios": "11.0"
+  },
+  "swift_versions": "5.0",
+  "source_files": "KoalaTeaVideoEditor/Classes/**/*",
+  "resources": [
+    "KoalaTeaVideoEditor/Assets/**/*"
+  ],
+  "dependencies": {
+    "SwifterSwift": [
+      "~> 5.0.0"
+    ],
+    "SwiftLint": [
+      "~> 0.33.0"
+    ],
+    "KoalaTeaAutoLayout": [
+      "~> 0.1.0"
+    ],
+    "KoalaTeaAssetPlayer": [
+      "~> 0.2.1"
+    ]
+  },
+  "swift_version": "5.0"
+}

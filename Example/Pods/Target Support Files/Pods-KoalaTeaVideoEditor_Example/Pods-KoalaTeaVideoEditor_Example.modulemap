@@ -1,0 +1,6 @@
+framework module Pods_KoalaTeaVideoEditor_Example {
+  umbrella header "Pods-KoalaTeaVideoEditor_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}
