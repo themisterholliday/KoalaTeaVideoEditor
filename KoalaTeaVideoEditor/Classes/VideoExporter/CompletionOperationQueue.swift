@@ -9,10 +9,10 @@ import Foundation
 
 public class CompletionOperationQueue: OperationQueue {
 
-    var completionBlock: (() -> Void)?
+    public var completionBlock: (() -> Void)?
     private var observation: NSKeyValueObservation?
 
-    init(completion: (() -> Void)? = nil) {
+    public init(completion: (() -> Void)? = nil) {
         self.completionBlock = completion
         super.init()
         self.observation = self.observe( \.operationCount ) { [weak self] (_, _) in

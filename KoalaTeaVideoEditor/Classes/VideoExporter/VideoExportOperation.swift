@@ -12,11 +12,11 @@ public enum VideoExportState {
 }
 
 public struct VideoExportSession {
-    let avExportSession: AVAssetExportSession
-    var progress: Float
-    var fileUrl: URL?
-    var error: Error?
-    var state: VideoExportState
+    public let avExportSession: AVAssetExportSession
+    public var progress: Float
+    public var fileUrl: URL?
+    public var error: Error?
+    public var state: VideoExportState
 
     init(avExportSession: AVAssetExportSession,
          fileUrl: URL,
@@ -33,6 +33,7 @@ public struct VideoExportSession {
 
 public class VideoExportOperation: AsynchronousOperation {
     private var exportSessionObject: VideoExportSession
+    private var timer: Timer?
 
     public var progress: Float {
         return exportSessionObject.progress
@@ -68,12 +69,14 @@ public class VideoExportOperation: AsynchronousOperation {
         self.started(exportSessionObject)
 
         let assetExportSession = exportSessionObject.avExportSession
-        let timer = Timer(timeInterval: 0.5, repeats: true) { _ in
-            self.handleTimerProgress(assetExportSession: assetExportSession)
+        DispatchQueue.main.async {
+            self.timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true, block: { _ in
+                self.handleTimerProgress(assetExportSession: assetExportSession)
+            })
         }
 
         assetExportSession.exportAsynchronously(completionHandler: {
-            timer.invalidate()
+            self.timer?.invalidate()
 
             switch assetExportSession.status {
             case .completed:
