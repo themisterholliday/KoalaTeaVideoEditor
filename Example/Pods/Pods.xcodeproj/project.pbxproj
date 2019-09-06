@@ -42,6 +42,10 @@
 		13D2A4D59DD9612E1AA7F3182A342162 /* mach_excServer.c in Sources */ = {isa = PBXBuildFile; fileRef = 867839F92DDAEF5827AE97BFCF431BDF /* mach_excServer.c */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
 		14E0B66CF499A96DD1146D427F1BE97E /* UIApplicationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9809B0B75BF8F31E4F8765E704A5F43F /* UIApplicationExtensions.swift */; };
 		15550AC7E2FC4863DDA69BCD9CB339DA /* ArrayExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87676C0BB1C4BC525F9B36B7FCB23F41 /* ArrayExtensions.swift */; };
+		16B472F8231F3B4800B68938 /* VideoEditor.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16B472F5231F3B4800B68938 /* VideoEditor.storyboard */; };
+		16B472F9231F3B4800B68938 /* VideoEditorLogicController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B472F6231F3B4800B68938 /* VideoEditorLogicController.swift */; };
+		16B472FA231F3B4800B68938 /* VideoEditorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B472F7231F3B4800B68938 /* VideoEditorViewController.swift */; };
+		16B4B7702321D29C001DF8A0 /* Validator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B4B76E2321D25B001DF8A0 /* Validator.swift */; };
 		16D617FFAB31C8641AB598A6DF50E9E9 /* FloatingPointExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB0A2DC7D9C6F6475FCABC6B46851F6F /* FloatingPointExtensions.swift */; };
 		16E2B846231ADB7800A23626 /* CALayer+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2B845231ADB7800A23626 /* CALayer+Helpers.swift */; };
 		184213CF9DCFEB4F2DA987546216D3FD /* MKPolylineExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4603E0DDFFCE5D24F4AC5766985D34D /* MKPolylineExtensions.swift */; };
@@ -116,7 +120,6 @@
 		677E3736DCD64F6D6D96EE13DE6548AA /* UIStoryboardExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F0034022FCB3917A1C7FED53AF8B77 /* UIStoryboardExtensions.swift */; };
 		6B10FAFAE5E6847C8E4B40B0998C4492 /* UserDefaultsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF3CF8D27713B427716A7032A5B5ED4 /* UserDefaultsExtensions.swift */; };
 		6BF90ECE3C28E53FB9A55FCEB2DF282D /* Pods-KoalaTeaVideoEditor_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 642326AF3214BF79A6FB98B8FCA4F49F /* Pods-KoalaTeaVideoEditor_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		6BFFEB92D667ACEAC2A5340F6C9C79F3 /* PHPhotoLibraryInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFA76426A1B6F754C2702849E2C02D1E /* PHPhotoLibraryInterface.swift */; };
 		6C5ECD5EC8FB83844E7CAD0F08071572 /* PlaybackLineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7BB20A8DA37153B752F74BBD0B7D2A1 /* PlaybackLineIndicatorView.swift */; };
 		6D89D03C497FDB884B6B0E128400EF6B /* UINavigationItemExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0157859F6C4D3A07793D5B1B0639F1D /* UINavigationItemExtensions.swift */; };
 		700BBCD3251EB632B048CCF8BB7FFE2B /* CompletionOperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0725CD46E3DC12106B8B0CB0F49C8F49 /* CompletionOperationQueue.swift */; };
@@ -205,7 +208,7 @@
 		BFCACE8732B68A38D2210C479BA5E4BE /* UIEdgeInsetsExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF1113C93006D5A8DF0B304935154B8 /* UIEdgeInsetsExtensions.swift */; };
 		C051C0411627BD5FCDA031782EB1F716 /* DSL.h in Headers */ = {isa = PBXBuildFile; fileRef = 95E7F9E76FFD7FEAC2B0E49868855955 /* DSL.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C0C98C8C7D07E1598F20EE2F0539197D /* NMBExpectation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68F12C37A03631D845CCC0CE84F8F4E4 /* NMBExpectation.swift */; settings = {COMPILER_FLAGS = "-DPRODUCT_NAME=Nimble/Nimble"; }; };
-		C19D890886D9C3C43BAA8223D6B4E989 /* VideoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CCECA99B5824DF591FEF70CD1C1AFB5 /* VideoAsset.swift */; };
+		C19D890886D9C3C43BAA8223D6B4E989 /* ExportableVideoAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CCECA99B5824DF591FEF70CD1C1AFB5 /* ExportableVideoAsset.swift */; };
 		C43FC4EFD9E762C454E4168953475A55 /* HooksPhase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0B584534CAD6E09E1BD6D2A882B46EE8 /* HooksPhase.swift */; };
 		C46FE880706D0B0902F409DD7A9E93F8 /* KoalaTeaVideoEditor-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 4080EDE30EE81DA604938DD2CF95486A /* KoalaTeaVideoEditor-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C4E829B6BA2E215E0451FC22CFA251A2 /* SwifterSwift-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 9BA16819123DB536EB2CD42F6A4A5CD5 /* SwifterSwift-dummy.m */; };
@@ -403,6 +406,10 @@
 		14EFC3B42C4FB7DB7FD90F1A1391EDB2 /* SwifterSwift.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = SwifterSwift.modulemap; sourceTree = "<group>"; };
 		151E4E278994B18BE51F4CEFA665EB59 /* NSViewExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NSViewExtensions.swift; path = Sources/SwifterSwift/AppKit/NSViewExtensions.swift; sourceTree = "<group>"; };
 		159FC5E103587A06A68E055CDCBE3DD5 /* ElementsEqual.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ElementsEqual.swift; path = Sources/Nimble/Matchers/ElementsEqual.swift; sourceTree = "<group>"; };
+		16B472F5231F3B4800B68938 /* VideoEditor.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = VideoEditor.storyboard; sourceTree = "<group>"; };
+		16B472F6231F3B4800B68938 /* VideoEditorLogicController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEditorLogicController.swift; sourceTree = "<group>"; };
+		16B472F7231F3B4800B68938 /* VideoEditorViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VideoEditorViewController.swift; sourceTree = "<group>"; };
+		16B4B76E2321D25B001DF8A0 /* Validator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Validator.swift; sourceTree = "<group>"; };
 		16E050717BBC5DB268942D44F65DFBBB /* CustomLayoutDSL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CustomLayoutDSL.swift; path = KoalaTeaAutoLayout/Classes/CustomLayoutDSL.swift; sourceTree = "<group>"; };
 		16E2B845231ADB7800A23626 /* CALayer+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Helpers.swift"; sourceTree = "<group>"; };
 		1728C4A8C2CD37F7D2C3D77326CB44BB /* KoalaTeaAssetPlayer-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "KoalaTeaAssetPlayer-umbrella.h"; sourceTree = "<group>"; };
@@ -517,7 +524,7 @@
 		8BE1672DE14DF8311989369B8950E00C /* CharacterExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CharacterExtensions.swift; path = Sources/SwifterSwift/SwiftStdlib/CharacterExtensions.swift; sourceTree = "<group>"; };
 		8C54A5E43456752FE5924343E60B5592 /* BeAnInstanceOf.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BeAnInstanceOf.swift; path = Sources/Nimble/Matchers/BeAnInstanceOf.swift; sourceTree = "<group>"; };
 		8C81A3F6D6E88BB13C101D6462262715 /* SwifterSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = SwifterSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8CCECA99B5824DF591FEF70CD1C1AFB5 /* VideoAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = VideoAsset.swift; sourceTree = "<group>"; };
+		8CCECA99B5824DF591FEF70CD1C1AFB5 /* ExportableVideoAsset.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = ExportableVideoAsset.swift; sourceTree = "<group>"; };
 		8E445E89376D2745AC71D698A54851DE /* MatcherProtocols.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MatcherProtocols.swift; path = Sources/Nimble/Matchers/MatcherProtocols.swift; sourceTree = "<group>"; };
 		8F81F6D9BEF4F59C90B3303B900BA4DC /* FileManagerExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FileManagerExtensions.swift; path = Sources/SwifterSwift/Foundation/FileManagerExtensions.swift; sourceTree = "<group>"; };
 		9039966A433474259B6C34E4840E3731 /* Pods-KoalaTeaVideoEditor_Example-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-KoalaTeaVideoEditor_Example-frameworks.sh"; sourceTree = "<group>"; };
@@ -609,7 +616,6 @@
 		DF0261AC69141F3603E434CC61B14F01 /* CGAffineTransform+VideoExporter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = "CGAffineTransform+VideoExporter.swift"; sourceTree = "<group>"; };
 		DF3BB1FA6B1F429D7E94123FE787AAB7 /* KoalaTeaAssetPlayer-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "KoalaTeaAssetPlayer-Info.plist"; sourceTree = "<group>"; };
 		DF93747405F00A425C336FD0BF3F4E7E /* BidirectionalCollectionExtensions.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BidirectionalCollectionExtensions.swift; path = Sources/SwifterSwift/SwiftStdlib/BidirectionalCollectionExtensions.swift; sourceTree = "<group>"; };
-		DFA76426A1B6F754C2702849E2C02D1E /* PHPhotoLibraryInterface.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = PHPhotoLibraryInterface.swift; sourceTree = "<group>"; };
 		DFD0BB4ADBC51C4958150A5FB7DBC30E /* Pods-KoalaTeaVideoEditor_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-KoalaTeaVideoEditor_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		E041C2C90BCBCFB491E0437C5029E447 /* CustomLayoutDSL.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CustomLayoutDSL.swift; path = KoalaTeaAssetPlayer/Classes/UI/CustomLayoutDSL.swift; sourceTree = "<group>"; };
 		E04964E72EBDAD13E916152F689CA5DB /* Pods-KoalaTeaVideoEditor_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-KoalaTeaVideoEditor_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
@@ -751,6 +757,7 @@
 				DF0261AC69141F3603E434CC61B14F01 /* CGAffineTransform+VideoExporter.swift */,
 				281D36621084D0217AE625062968E442 /* CGSizeExtensions.swift */,
 				16E2B845231ADB7800A23626 /* CALayer+Helpers.swift */,
+				16B4B76E2321D25B001DF8A0 /* Validator.swift */,
 			);
 			name = MiscExtensions;
 			path = KoalaTeaVideoEditor/Classes/MiscExtensions;
@@ -1006,8 +1013,7 @@
 				203B7CCD864710BEAD99B31E0525A925 /* AsynchronousOperation.swift */,
 				0725CD46E3DC12106B8B0CB0F49C8F49 /* CompletionOperationQueue.swift */,
 				0BD38B8EF007622048045B3DB316A5C6 /* FileHelpers.swift */,
-				DFA76426A1B6F754C2702849E2C02D1E /* PHPhotoLibraryInterface.swift */,
-				8CCECA99B5824DF591FEF70CD1C1AFB5 /* VideoAsset.swift */,
+				8CCECA99B5824DF591FEF70CD1C1AFB5 /* ExportableVideoAsset.swift */,
 				9164F1B51B91AE5B61EE7FA718E9F76D /* VideoExporter.swift */,
 				AAE060C196A437A7F83CA6CAEBF444D3 /* VideoExportOperation.swift */,
 			);
@@ -1323,6 +1329,9 @@
 			isa = PBXGroup;
 			children = (
 				F5E54B864764BC57115E7CC87F6B99B8 /* DraggableView.swift */,
+				16B472F5231F3B4800B68938 /* VideoEditor.storyboard */,
+				16B472F6231F3B4800B68938 /* VideoEditorLogicController.swift */,
+				16B472F7231F3B4800B68938 /* VideoEditorViewController.swift */,
 			);
 			name = VideoEditor;
 			path = KoalaTeaVideoEditor/Classes/VideoEditor;
@@ -1638,6 +1647,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				16B472F8231F3B4800B68938 /* VideoEditor.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1752,12 +1762,14 @@
 				95AE516CE25E549A17AF34D741F52DA6 /* DraggableView.swift in Sources */,
 				76762E2BE83A833A2A34E62FC6CEC65F /* FileHelpers.swift in Sources */,
 				9F943A1B05B99A773327742E3AA8F4D3 /* KoalaTeaVideoEditor-dummy.m in Sources */,
-				6BFFEB92D667ACEAC2A5340F6C9C79F3 /* PHPhotoLibraryInterface.swift in Sources */,
+				16B472FA231F3B4800B68938 /* VideoEditorViewController.swift in Sources */,
 				6C5ECD5EC8FB83844E7CAD0F08071572 /* PlaybackLineIndicatorView.swift in Sources */,
+				16B472F9231F3B4800B68938 /* VideoEditorLogicController.swift in Sources */,
 				BEE821215FEA9B7E3EEF39FA63162FA2 /* SecondsTickView.swift in Sources */,
 				42FD621C8A3123E9685F5D4837C662E3 /* TimelineCropView.swift in Sources */,
+				16B4B7702321D29C001DF8A0 /* Validator.swift in Sources */,
 				00BBFCD4152F54245918310470E3E265 /* TimelineView.swift in Sources */,
-				C19D890886D9C3C43BAA8223D6B4E989 /* VideoAsset.swift in Sources */,
+				C19D890886D9C3C43BAA8223D6B4E989 /* ExportableVideoAsset.swift in Sources */,
 				71CB546929973FC4F3C66FB187232327 /* VideoExporter.swift in Sources */,
 				53885693BCA093E615ABB3C5E88B056B /* VideoExportOperation.swift in Sources */,
 				63C4130689C06635CA7EB39679DAAC04 /* VideoFramesScrollingView.swift in Sources */,

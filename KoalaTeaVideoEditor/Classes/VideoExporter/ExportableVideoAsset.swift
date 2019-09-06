@@ -20,13 +20,82 @@ extension TimePoints: Equatable {
     }
 }
 
-public class VideoAsset: Asset {
+public class ExportableVideoAsset: Asset {
     /// Start and End times for export
     public private(set) var timePoints: TimePoints
     /// frame of video in relation to CanvasView to be exported
     public var frame: CGRect
+    /// frame to be cropped from the `frame`
+    public var cropViewFrame: CGRect
     public var viewTransform: CGAffineTransform
     public var adjustedOrigin: CGPoint
+
+    // MARK: Init
+    public init(urlAsset: AVURLAsset,
+                timePoints: TimePoints,
+                frame: CGRect = .zero,
+                cropViewFrame: CGRect = .zero,
+                viewTransform: CGAffineTransform = .identity,
+                adjustedOrigin: CGPoint = .zero) {
+        self.timePoints = timePoints
+        self.frame = frame
+        self.cropViewFrame = cropViewFrame
+        self.viewTransform = viewTransform
+        self.adjustedOrigin = adjustedOrigin
+        super.init(urlAsset: urlAsset)
+    }
+
+    public convenience init(url: URL) {
+        let urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
+        let timePoints = TimePoints(startTime: CMTime.zero, endTime: Asset.adjustedTimeScaleDuration(for: urlAsset.duration))
+        self.init(urlAsset: urlAsset, timePoints: timePoints)
+    }
+
+    public convenience init(urlAsset: AVURLAsset) {
+        let timePoints = TimePoints(startTime: CMTime.zero, endTime: Asset.adjustedTimeScaleDuration(for: urlAsset.duration))
+        self.init(urlAsset: urlAsset, timePoints: timePoints)
+    }
+
+    // MARK: Mutating Functions
+    public func changeStartTime(to time: Double) -> ExportableVideoAsset {
+        let cmTime = CMTimeMakeWithSeconds(time, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
+        self.timePoints.startTime = cmTime
+
+        if time < 0 {
+            self.timePoints.startTime = .zero
+        }
+
+        return self
+    }
+
+    public func changeEndTime(to time: Double, ignoreOffset: Bool = false) -> ExportableVideoAsset {
+        let cmTime = CMTimeMakeWithSeconds(time, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
+
+        let urlAssetDuration = ExportableVideoAsset.adjustedTimeScaleDuration(for: urlAsset.duration)
+
+        guard cmTime < urlAssetDuration else {
+            var offset = CMTime(seconds: 0, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
+
+            if !ignoreOffset {
+                offset = cmTime - urlAssetDuration
+            }
+
+            let newStartTime = self.timePoints.startTime - offset
+
+            self.timePoints.endTime = urlAssetDuration
+            // Have to adjust start time before returning
+            return self.changeStartTime(to: newStartTime.seconds)
+        }
+
+        self.timePoints.endTime = cmTime
+        return self
+    }
+}
+
+extension ExportableVideoAsset {
+    public struct PublicConstants {
+        static let MaxCropDurationInSeconds = 5.0
+    }
 
     /// Framerate of Video
     public var framerate: Double? {
@@ -58,81 +127,16 @@ public class VideoAsset: Asset {
     private var timeScale: Int32 {
         return Asset.PublicConstants.DefaultTimeScale
     }
-
-    // MARK: Init
-    public init(urlAsset: AVURLAsset,
-                timePoints: TimePoints,
-                frame: CGRect = .zero,
-                viewTransform: CGAffineTransform = .identity,
-                adjustedOrigin: CGPoint = .zero) {
-        self.timePoints = timePoints
-        self.frame = frame
-        self.viewTransform = viewTransform
-        self.adjustedOrigin = adjustedOrigin
-        super.init(urlAsset: urlAsset)
-    }
-
-    public convenience init(url: URL) {
-        let urlAsset = AVURLAsset(url: url, options: [AVURLAssetPreferPreciseDurationAndTimingKey: true])
-        let timePoints = TimePoints(startTime: CMTime.zero, endTime: Asset.adjustedTimeScaleDuration(for: urlAsset.duration))
-        self.init(urlAsset: urlAsset, timePoints: timePoints)
-    }
-
-    public convenience init(urlAsset: AVURLAsset) {
-        let timePoints = TimePoints(startTime: CMTime.zero, endTime: Asset.adjustedTimeScaleDuration(for: urlAsset.duration))
-        self.init(urlAsset: urlAsset, timePoints: timePoints)
-    }
-
-    // MARK: Mutating Functions
-    public func changeStartTime(to time: Double) -> VideoAsset {
-        let cmTime = CMTimeMakeWithSeconds(time, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
-        self.timePoints.startTime = cmTime
-
-        if time < 0 {
-            self.timePoints.startTime = .zero
-        }
-
-        return self
-    }
-
-    public func changeEndTime(to time: Double, ignoreOffset: Bool = false) -> VideoAsset {
-        let cmTime = CMTimeMakeWithSeconds(time, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
-
-        let urlAssetDuration = VideoAsset.adjustedTimeScaleDuration(for: urlAsset.duration)
-
-        guard cmTime < urlAssetDuration else {
-            var offset = CMTime(seconds: 0, preferredTimescale: Asset.PublicConstants.DefaultTimeScale)
-
-            if !ignoreOffset {
-                offset = cmTime - urlAssetDuration
-            }
-
-            let newStartTime = self.timePoints.startTime - offset
-
-            self.timePoints.endTime = urlAssetDuration
-            // Have to adjust start time before returning
-            return self.changeStartTime(to: newStartTime.seconds)
-        }
-
-        self.timePoints.endTime = cmTime
-        return self
-    }
 }
 
-extension VideoAsset {
-    public struct PublicConstants {
-        static let MaxCropDurationInSeconds = 5.0
+extension ExportableVideoAsset {
+    private var copy: ExportableVideoAsset {
+        return ExportableVideoAsset(urlAsset: urlAsset, timePoints: timePoints, frame: frame, viewTransform: viewTransform, adjustedOrigin: adjustedOrigin)
     }
 
-    public var copy: VideoAsset {
-        return VideoAsset(urlAsset: urlAsset, timePoints: timePoints, frame: frame, viewTransform: viewTransform, adjustedOrigin: adjustedOrigin)
-    }
-}
-
-extension VideoAsset {
-    public static func generateClippedAssets(for clipLength: Int, from asset: VideoAsset) -> [VideoAsset] {
-        let ranges = VideoAsset.getTimeRanges(for: asset.duration.rounded().int, clipLength: clipLength)
-        return ranges.map { (range) -> VideoAsset in
+    public static func generateClippedAssets(for clipLength: Int, from asset: ExportableVideoAsset) -> [ExportableVideoAsset] {
+        let ranges = ExportableVideoAsset.getTimeRanges(for: asset.duration.rounded().int, clipLength: clipLength)
+        return ranges.map { (range) -> ExportableVideoAsset in
             let new = asset.copy.changeStartTime(to: range.start.seconds).changeEndTime(to: range.end.seconds, ignoreOffset: true)
             return new
         }
@@ -154,7 +158,7 @@ extension VideoAsset {
     }
 }
 
-extension Array {
+private extension Array {
     func chunked(into size: Int) -> [[Element]] {
         return stride(from: 0, to: count, by: size).map {
             Array(self[$0 ..< Swift.min($0 + size, count)])
