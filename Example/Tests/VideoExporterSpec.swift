@@ -10,7 +10,7 @@ import Quick
 import Nimble
 import SwifterSwift
 import CoreMedia
-    import KoalaTeaVideoEditor
+import KoalaTeaVideoEditor
 
 class VideoExporterSpec: QuickSpec {
     override func spec() {
@@ -45,7 +45,7 @@ class VideoExporterSpec: QuickSpec {
                     let finalAssetFrame = CGRect(x: 0, y: 0, width: 1280, height: 720)
                     finalAsset.frame = finalAssetFrame
 
-                    let exportSize: VideoExporter.VideoExportSizes = ._720x1280
+                    let exportSize: VideoExportSizes = ._720x1280
 
                     let cropWidth = exportSize.size.width / 2
                     let cropHeight = exportSize.size.height / 2
@@ -84,7 +84,7 @@ class VideoExporterSpec: QuickSpec {
                     let finalAssetFrame = CGRect(x: 0, y: 0, width: 1280, height: 720)
                     finalAsset.frame = finalAssetFrame
 
-                    let exportSize: VideoExporter.VideoExportSizes = ._1280x720
+                    let exportSize: VideoExportSizes = ._1280x720
                     let operation = try! VideoExporter.createVideoExportOperationWithoutCrop(videoAsset: finalAsset)
 
                     operation.progressBlock = { progressOperation in
@@ -179,7 +179,7 @@ class VideoExporterSpec: QuickSpec {
                     let finalAsset = thirtySecondAsset
                     finalAsset.frame = CGRect(origin: .zero, size: thirtySecondAsset.naturalAssetSize ?? .zero)
 
-                    let _ = VideoExporter.exportClips(videoAsset: finalAsset,
+                    let _ = VideoClipsExporter().exportClips(videoAsset: finalAsset,
                                                       clipLength: 10,
                                                       queue: .main,
                                                       overlayView: watermarkView,

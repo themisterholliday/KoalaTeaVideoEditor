@@ -11,7 +11,7 @@ import UIKit
 import KoalaTeaAssetPlayer
 
 /// Exporter for VideoAssets
-public class VideoExporter {
+public enum VideoExporter {
     private enum VideoManagerError: Error {
         case FailedError(reason: String)
         case CancelledError
@@ -19,94 +19,16 @@ public class VideoExporter {
         case NoFirstVideoTrack
         case NoFirstAudioTrack
     }
-    
-    /**
-     Supported Final Video Sizes
-     
-     - _1080x1080: 1080 width by 1080 height
-     - _1280x720: 1280 width by 720 height
-     - _720x1280: 720 width by 1280 height
-     - _1920x1080: 1920 width by 1080 height
-     - _1080x1920: 1080 width by 1920 height
-     */
-    public enum VideoExportSizes {
-        case _1080x1080
-        case _1024x1024
-        case _1280x720
-        case _720x1280
-        case _1920x1080
-        case _1080x1920
-        case _1280x1024_twitter
-
-        public var size: CGSize {
-            switch self {
-            case ._1080x1080:
-                return CGSize(width: 1080, height: 1080)
-            case ._1024x1024:
-                return CGSize(width: 1024, height: 1024)
-            case ._1280x720:
-                return CGSize(width: 1280, height: 720)
-            case ._720x1280:
-                return CGSize(width: 720, height: 1280)
-            case ._1920x1080:
-                return CGSize(width: 1920, height: 1080)
-            case ._1080x1920:
-                return CGSize(width: 1080, height: 1920)
-            case ._1280x1024_twitter:
-                return CGSize(width: 1280, height: 1024)
-            }
-        }
-        
-        public init?(string: String?) {
-            switch string {
-            case "720x1280":
-                self = ._720x1280
-            case "1080x1920":
-                self = ._1080x1920
-            default:
-                return nil
-            }
-        }
-    }
 }
 
 extension VideoExporter {
-    /**
-     Exports a video to the disk from AVMutableComposition and AVMutableVideoComposition.
-     
-     - Parameters:
-     - avMutableComposition: Layer composition of everything except video
-     - avMutatableVideoComposition: Video composition
-     
-     - progress: Returns progress every second.
-     - success: Completion for when the video is saved successfully.
-     - failure: Completion for when the video failed to save.
-     */
-    @discardableResult private static func exportVideoToDiskFrom(avMutableComposition: AVMutableComposition,
-                                                                 avMutatableVideoComposition: AVMutableVideoComposition) throws -> VideoExportOperation {
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            throw VideoManagerError.FailedError(reason: "Get File Path Error")
-        }
-        
-        guard let appName = Bundle.main.infoDictionary?[kCFBundleNameKey as String] as? String else {
-            throw VideoManagerError.FailedError(reason: "Cannot find App Name")
-        }
-        
-        let dateString = Date.currentDateTimeString
-        let uuid = UUID().uuidString
-        let fileURL = documentDirectory.appendingPathComponent("\(appName)-\(dateString)-\(uuid).mp4")
+    private static func exportVideoToDiskFrom(avMutableComposition: AVMutableComposition, avMutatableVideoComposition: AVMutableVideoComposition) throws -> VideoExportOperation {
+        let fileURL = try buildAppDateTimeMP4FileURL()
         
         // Remove any file at URL because if file exists assetExport will fail
         FileHelpers.removeFileAtURL(fileURL: fileURL)
-        
-        // Create AVAssetExportSession
-        guard let assetExportSession = AVAssetExportSession(asset: avMutableComposition, presetName: AVAssetExportPresetHighestQuality) else {
-            throw VideoManagerError.FailedError(reason: "Can't create asset exporter")
-        }
-        assetExportSession.videoComposition = avMutatableVideoComposition
-        assetExportSession.outputFileType = AVFileType.mp4
-        assetExportSession.shouldOptimizeForNetworkUse = true
-        assetExportSession.outputURL = fileURL
+
+        let assetExportSession = try buildAVAssetExportSession(mixComposition: avMutableComposition, videoComposition: avMutatableVideoComposition, outputURL: fileURL)
         
         let videoExport = VideoExportSession(avExportSession: assetExportSession, fileUrl: fileURL)
         return VideoExportOperation(export: videoExport)
@@ -173,21 +95,8 @@ extension VideoExporter {
     }
 }
 
-extension AVAssetTrack {
-    var assetInfo: (orientation: UIImage.Orientation, isPortrait: Bool) {
-        let assetTransform = self.preferredTransform
-        let assetInfo = VideoExporterOrientationHelper.orientationFromTransform(transform: assetTransform)
-        return assetInfo
-    }
-}
-
-// MARK: Generic Export Method
+// MARK: Export Methods
 extension VideoExporter {
-    /// Export video from VideoAsset with a cropping view to a final export size.
-    ///
-    /// - Parameters:
-    ///   - videoAsset: VideoAsset to export
-    ///   - finalExportSize: final export size the video will be after completeing
     public static func createVideoExportOperationWithCrop(videoAsset: ExportableVideoAsset, finalExportSize: VideoExportSizes) throws -> VideoExportOperation {
         try validate(videoAsset, using: .isCropping)
 
@@ -255,7 +164,7 @@ extension VideoExporter {
         return try self.exportVideoToDiskFrom(avMutableComposition: mixComposition, avMutatableVideoComposition: avMutableVideoComposition)
     }
 
-    @discardableResult public static func createVideoExportOperationWithoutCrop(videoAsset: ExportableVideoAsset, overlayView: UIView? = nil) throws -> VideoExportOperation {
+    public static func createVideoExportOperationWithoutCrop(videoAsset: ExportableVideoAsset, overlayView: UIView? = nil) throws -> VideoExportOperation {
         try validate(videoAsset, using: .noCropping)
 
         // 1 - Create AVMutableComposition object. This object will hold your AVMutableCompositionTrack instances.
@@ -293,7 +202,7 @@ extension VideoExporter {
         var finalAVMutable = avMutableVideoComposition
 
         if let copyOfLayer = overlayView?.layer.copyOfLayer {
-            finalAVMutable = self.addLayer(copyOfLayer, to: avMutableVideoComposition)
+            finalAVMutable = AVMutableVideoCompositionLayerAdder.addLayer(copyOfLayer, to: avMutableVideoComposition)
         }
         
         // 3 - Audio track
@@ -305,114 +214,48 @@ extension VideoExporter {
         try audioTrack?.insertTimeRange(videoAsset.timeRange, of: audioAsset, at: CMTime.zero)
         
         // 4 Export Video
-        
-        // @TODO: move to create directory method
-        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            throw VideoManagerError.FailedError(reason: "Get File Path Error")
-        }
-        
-        guard let appName = Bundle.main.infoDictionary?[kCFBundleNameKey as String] as? String else {
-            throw VideoManagerError.FailedError(reason: "Cannot find App Name")
-        }
-        
-        let dateString = Date.currentDateTimeString
-        let uuid = UUID().uuidString
-        let fileURL = documentDirectory.appendingPathComponent("\(appName)-\(dateString)-\(uuid).mp4")
+        let fileURL = try buildAppDateTimeMP4FileURL()
         
         // Remove any file at URL because if file exists assetExport will fail
         FileHelpers.removeFileAtURL(fileURL: fileURL)
-        
-        // @TODO: move to create asset session method
-        // Create AVAssetExportSession
-        guard let assetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality) else {
-            throw VideoManagerError.FailedError(reason: "Can't create asset exporter")
-        }
-        assetExportSession.videoComposition = finalAVMutable
-        assetExportSession.outputFileType = AVFileType.mp4
-        assetExportSession.shouldOptimizeForNetworkUse = true
-        assetExportSession.outputURL = fileURL
+
+        let assetExportSession = try buildAVAssetExportSession(mixComposition: mixComposition, videoComposition: finalAVMutable, outputURL: fileURL)
         
         let videoExport = VideoExportSession(avExportSession: assetExportSession, fileUrl: fileURL)
 
         return VideoExportOperation(export: videoExport)
     }
-    
-    // @TODO: move somewhere else
-    private static func addLayer(_ layer: CALayer, to avMutableVideoComposition: AVMutableVideoComposition) -> AVMutableVideoComposition {
-        let frameForLayers = CGRect(origin: .zero, size: avMutableVideoComposition.renderSize)
-        let videoLayer = CALayer()
-        videoLayer.frame = frameForLayers
-        
-        let parentlayer = CALayer()
-        parentlayer.frame = frameForLayers
-        parentlayer.isGeometryFlipped = true
-        parentlayer.addSublayer(videoLayer)
-        
-        // Actually add layer to parent layer
-        parentlayer.addSublayer(layer)
-        
-        avMutableVideoComposition.animationTool = AVVideoCompositionCoreAnimationTool(postProcessingAsVideoLayer: videoLayer, in: parentlayer)
-        return avMutableVideoComposition
-    }
 }
 
+// MARK: - Helper Methods
 extension VideoExporter {
-    private static var videoExportOperationQueue: CompletionOperationQueue = {
-        let asyncOperationQueue = CompletionOperationQueue(completion: nil)
-        asyncOperationQueue.maxConcurrentOperationCount = 1
-        return asyncOperationQueue
-    }()
+    static func buildAVAssetExportSession(mixComposition: AVMutableComposition, videoComposition: AVMutableVideoComposition, outputURL: URL) throws -> AVAssetExportSession {
+        guard let assetExportSession = AVAssetExportSession(asset: mixComposition, presetName: AVAssetExportPresetHighestQuality) else {
+            throw VideoManagerError.FailedError(reason: "Can't create asset exporter")
+        }
+        assetExportSession.videoComposition = videoComposition
+        assetExportSession.outputFileType = AVFileType.mp4
+        assetExportSession.shouldOptimizeForNetworkUse = true
+        assetExportSession.outputURL = outputURL
+        return assetExportSession
+    }
 
-    public static func exportClips(videoAsset: ExportableVideoAsset,
-                                   clipLength: Int,
-                                   queue: DispatchQueue,
-                                   overlayView: UIView? = nil,
-                                   progress: @escaping (Float) -> Void,
-                                   completion: @escaping (_ fileUrls: [URL], _ errors: [Error]) -> Void) -> CompletionOperationQueue {
-        let assets = ExportableVideoAsset.generateClippedAssets(for: clipLength, from: videoAsset)
-        
-        let completionOperation = VideoExporter.videoExportOperationQueue
-        let operations = assets.compactMap { (asset) -> VideoExportOperation? in
-            return try? VideoExporter.createVideoExportOperationWithoutCrop(videoAsset: asset, overlayView: overlayView)
+    static func buildAppDateTimeMP4FileURL() throws -> URL {
+        guard let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            throw VideoManagerError.FailedError(reason: "Get File Path Error")
         }
 
-        completionOperation.completionBlock = {
-            let fileUrls = operations.compactMap({ $0.fileUrl })
-            let errors = operations.compactMap({ $0.error })
-            completion(fileUrls, errors)
+        guard let appName = Bundle.main.infoDictionary?[kCFBundleNameKey as String] as? String else {
+            throw VideoManagerError.FailedError(reason: "Cannot find App Name")
         }
 
-        var itemsProgress: [Int: Float] = [:]
-
-        operations.enumerated().forEach { (index, operation) in
-            videoExportOperationQueue.addOperation(operation)
-            operation.progressBlock = { session in
-                itemsProgress[index] = session.progress
-                let allProgress = itemsProgress.values.reduce(0.0, +)
-                progress(allProgress / operations.count.float)
-            }
-        }
-        
-        return completionOperation
+        let dateString = Date.currentDateTimeString
+        let uuid = UUID().uuidString
+        return documentDirectory.appendingPathComponent("\(appName)-\(dateString)-\(uuid).mp4")
     }
 }
 
-private extension Date {
-    static var currentDateTimeString: String {
-        let utcTimeZone = TimeZone(abbreviation: "UTC")
-        let dateFormatter = ISO8601DateFormatter()
-        dateFormatter.timeZone = utcTimeZone
-        return dateFormatter.string(from: Date())
-    }
-}
-
-private extension CALayer {
-    var copyOfLayer: CALayer? {
-        let archive = NSKeyedArchiver.archivedData(withRootObject: self)
-        return NSKeyedUnarchiver.unarchiveObject(with: archive) as? CALayer
-    }
-}
-
+// MARK: - ExportableVideoAsset Validator
 private extension Validator where Value == ExportableVideoAsset {
     static var noCropping: Validator {
         return Validator { asset in
@@ -435,5 +278,22 @@ private extension Validator where Value == ExportableVideoAsset {
                 errorMessage: "Crop frame cannot be zero when cropping"
             )
         }
+    }
+}
+
+// MARK: - Helper Extensions
+private extension Date {
+    static var currentDateTimeString: String {
+        let utcTimeZone = TimeZone(abbreviation: "UTC")
+        let dateFormatter = ISO8601DateFormatter()
+        dateFormatter.timeZone = utcTimeZone
+        return dateFormatter.string(from: Date())
+    }
+}
+
+private extension CALayer {
+    var copyOfLayer: CALayer? {
+        let archive = NSKeyedArchiver.archivedData(withRootObject: self)
+        return NSKeyedUnarchiver.unarchiveObject(with: archive) as? CALayer
     }
 }

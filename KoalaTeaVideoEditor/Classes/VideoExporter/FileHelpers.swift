@@ -11,7 +11,7 @@ import Foundation
 public class FileHelpers {
     public class func getDocumentsURL(for filename: String, extension extensionString: String) -> URL? {
         guard let docsDirectory = getDocumentsDirectory() else { return nil }
-        let url = docsDirectory.appendingPathComponent(filename + "." + extensionString)
+        let url = docsDirectory.appendingPathComponent("\(filename).\(extensionString)")
         return url
     }
 
